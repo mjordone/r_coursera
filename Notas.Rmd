@@ -1,0 +1,73 @@
+---
+title: "Notas"
+author: "Martin Ordonez"
+date: "10/2/2020"
+output: html_document
+---
+
+## Objects
+R has five basic "atomic" classes of objects:
+- character  
+- numeric (real numbers)  
+- integer 
+- complex  
+- logical (True/False)  
+
+The most basic object is a **vector** (contains multiple copies of a single class of objects)  
+There is one exception: a *list*, a vector that can have multiple different classes of objects.  
+
+To create vector: `vector ()`.  
+It has two basic elements: 1. The class of the object (the type), 2. The length of the vector itself  
+
+Objects can also have names (useful for writing readable code and self-describing objects). Lists can also have names.
+
+## Numbers
+All numbers are numeric objects.  
+"inf" is an special number
+"NaN" is another number: an undefined value (or a missing value)
+
+## Attributes
+Part of objects, although not all objects have attributes  
+Can be accessed through `attributes ()`.  
+They can be names, dimnames, dimensions, class, length, other
+
+## Matrices
+They are special type of vector with a special attribute: dimension
+
+## Factors
+Another type of vectors created to represent categorical data. they can be unordered or ordered. Can be thought of as an integer vector where each integer has a label (i.e. what is usually is categorical variables). We can add lables to those integers.  
+They are especial because they are treated specially by modling functions.
+
+## Missing values
+denoted NA or NaN
+
+## Data Frames
+It is what we use to store tabular data.  
+Represented as a special type of list where every element of the list has to the same length (in order to be a table every column has to have the same length). However, each column doesn't need to be the same type. So it is like a matrix, but where the objects in each column can be of different class.  
+Every row of a data fram has a name. The name can be something significant (e.g. the name of the interviewees) or just correlative numbers. `row.names`
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
