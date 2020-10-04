@@ -58,8 +58,6 @@ is.na()
 is.nan()
 
 # To create data frames
-data.frame()
-
 x <- data.frame(foo = 1:4, bar = c(T,T,F,F)) # a data frame with two variables: "foo" and "bar".
 
 # to convert a data frame into a matrix
