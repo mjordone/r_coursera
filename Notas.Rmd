@@ -46,6 +46,43 @@ It is what we use to store tabular data.
 Represented as a special type of list where every element of the list has to the same length (in order to be a table every column has to have the same length). However, each column doesn't need to be the same type. So it is like a matrix, but where the objects in each column can be of different class.  
 Every row of a data fram has a name. The name can be something significant (e.g. the name of the interviewees) or just correlative numbers. `row.names`
 
+# About read.table
+It is the most common function for reading data. Some important arguments:  
+- file: the name of a file, or a connection  
+- header: logical indicating if the file has a header line  
+- sep: a string indicating how the colums are separated  
+- colClasses: a character vector indicating the class of each column in the dataset  
+- nrows: the number of rows in the dataset  
+- comment.char: a character string indicating the comment character  
+- skip: the number of lines to skip from the beginning  
+- stringsAsFactors: should character varaibles be coded as factors?  
+
+**Read the help page for read.table**. It contains many hints  
+**For large datasets:**  
+- Make a rough calculation of the memory required to store the dataset. I the datsaset is larger than the amount of RAM on the computer, stop.
+- `colClasses` argument can make `read.table` much faster (prevents R from needing to figure out which type of data there is in every column). Example:  
+
+```
+initial <- read.table("datatable.txt", nrows = 100)
+classes <- sapply(initial,class)
+tabAll <- read-table("datatable.txt",
+                    colClasses = classes)
+```
+
+Useful to know when working with large datasets: How much memory is available? what other applicatis are in use? are there other users logged into the same system? what operating system? Is teh OS 32 or 64 bit?
+
+**Calculating memory requirements:** If all the data is numeric will be `nrows * ncolums * 8` bytes. I must divide it for 2^20 to get the MB. That will be the size of the dataset. Rule of thumb: I will need twice as memory as that.
+
+## Textual formats
+The advantage of this type of formats is that it contains metadata about the dataset (eg, classes of the columns). `dump` and `dput`. Problem is that they are not very space-efficient.
+
+## Connections to the outside world
+`file`: a connection to a file (gzfile and bzfile create connections to gzip and bzip2 compressed files)  
+`url`: a connection to a webpage  
+
+Connections can be useful if you want to read parts of a file
+
+
 
 
 ```{r setup, include=FALSE}
