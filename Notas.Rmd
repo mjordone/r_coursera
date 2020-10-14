@@ -36,7 +36,7 @@ They are special type of vector with a special attribute: dimension
 
 ## Factors
 Another type of vectors created to represent categorical data. they can be unordered or ordered. Can be thought of as an integer vector where each integer has a label (i.e. what is usually is categorical variables). We can add lables to those integers.  
-They are especial because they are treated specially by modling functions.
+They are special because they are treated specially by modling functions.
 
 ## Missing values
 denoted NA or NaN
@@ -81,6 +81,259 @@ The advantage of this type of formats is that it contains metadata about the dat
 `url`: a connection to a webpage  
 
 Connections can be useful if you want to read parts of a file
+
+## Subsetting in R
+This is, extracting subsets of R objects.  
+- `[` always returns an object of the same class as the original (if yuo subset a vector, you will get a vector; if you subset a list, you will get a list; etc.); can be used to select more than one element (although exceptions). Can be used to select mor than one element of an object.   
+- `[[` is used to extrac elements of a list or a data frame; it can only be used to extract a single element and the class of the returned object will not necessarily be a list or a data frame. It can be used to index a list, where the index itself was computed (while $ can only be used with literal names. See example in Comandos útiles)
+- `$` is used to extract elements of a list or a data frame by name (so, extract the element by using the name of the element); semantics are semilar to that of `[[`
+
+### Susetting with partial matching
+works with `[[` and `$` to do a partial matching. I can use `$` giving it only the first letter of the name of the element (e.g., `$a` if the name of the element aardvark). `$` by defaul looks for a name in the given list that mathches the letter we give.  
+It doesnt work with `[[` (it expects that what we give is the exact name of the element). By default it doesn't do partial matching.
+
+## Removing NA Values
+...
+
+##Vectorized operations
+Various things can happen in parallel while doing a computation. For example, if I have two vectors, I may want to add them (1st element of x + 1st element of y; 2nd of x + 2nd of y; so on...). Here, we don't need to do a loop, we can just use the plus on the two vectors and it will add them together. Vectorized operations are operations that performed to all the elements in a vector.
+
+
+## Control Structures in R
+Allows controlling the flow of an R program
+- `if, else`: testing a condition  
+- `for`: execute a loop a fixed number of times  
+- `while`: execute a loop *while* a condition is true  
+-`repeat`: execute an infinite loop  
+- `brek`: break the execution of a loop  
+- `next`: skip an interation of a loop  
+- `return`: exit a function
+
+###Control Structure IF-Else
+...
+
+##Writing Functions
+They are R objects of the class "function". They are "first class objects", which means that they can be treated much like any other R object. Importantly,this means:  
+- Functions can be passed as arguments to other functions.  
+- Functions can be nested, so that you can define a function inside of another function. The return value of a function is the last expression in the function body to be evaluated.  
+
+Functions have *named arguments* which potentially have default values.  
+- the *formal arguments* are the arguments included in the function definition  
+- the `formals` function returns a list of all the formal arguments of a function  
+- not every function call in R makes use of all the formal arguments  
+- function arguments can be *missing* or might have default values  
+
+R functions arguments can be matched positionally or by name. So the follwing calls to `sd` are all equivalent:  
+mydata <- rnorm(100)  
+sd(mydata)  
+sd(x=mydata)  
+sd(x=mydata, na.rm=FALSE)  
+sd(na.rm =FALSE, x=mydata)  
+sd(na.rm=FALSE,mydata)  
+
+You can mix positional matching with matching by name. When an argument is mached by name, it is "taken out" of the argument list and the remining unnamed arguments are matched in the order that they are listed in the function definition. R identifies the type of argument you are introducing and matches it to the type of argument that is required to run a specific function.
+
+### Lazy Evaluations
+Arguments to functions are evaluated *lazily*, to they are evaluated only as needed. So, if an argument in the function is never defined, running the function without that argument will not return an error, it will just work with the rest (at least, as far as the arguments are positionally matched).
+
+### The "..." Argument
+The ... argument indicate a variable number of arguments that are usually psased on to other functions. ... is often used when extending another function and you don't want to copy the entire argument list of the original function.  
+Generic functions use ... so that extra arguments can be passed to methods (e.g., function "mean").  
+The ... argument is also necessary when the number of arguments passed to the function cannot be known in advance (e.g., functions "paste" and "cat").  
+One catch with ... is that any arguments that appear *after* ... on the argument list, must be named explicitly and cannot be partially matched (i.e., matched by using an approximate to the name of the argument).  
+
+### Scoping Rules
+How does R know which value to assign to which symbol? E.g., if I create a function and name it using the name of other already existing function. When R tries to bind a value to a symbol, it searches through a series of `environments` to find the appropriate value. When you are working on the command line and need to retrieve the value of an R object, the order is roughly:  
+1. Search the global environment for a symbol name matching the one requested.  
+2. Search teh namespaces of each of the packages on the search list (the order of the packages on the search list matters!). Users can configure which packages get loaded on startup so you cannot assume that there will be a set list of packages available. When user loads a package with `library` the namespace of that package gets put in position 2 of the search list (by default) and everything else gets shifted down the list.  
+The search list can be found by using the `search` function. Note that r has separate namespaces for functions and non-functions, so it's possible to have an object named c and a function named c.  
+
+The scoping rules for R are the main feature that make it idfferent from the original S language.  
+- The scoping rules determine how a value is associated with a free variable in a function. In a function, there are two types of variables (the function arguments that are passed through the definition of the function, other variables or symbols that are not function arguments). How to assign a value to those symbols?  
+- R uses *lexical scoping* or *static scoping*. A common alternative is *dynamic scoping*  
+- Related to the scoping rules is how R uses the seach *list* to bind a value to a symbol  
+- Lexical scoping turns out to be particularly useful for simplifying statistical computations  
+
+E.g., consider the function:  
+f <- function(x,y) {
+      x^2 + y/z
+}  
+
+This function has 2 formal arguments (`x` and `y`). In the body of the function there is another symbol `z`. In this case `z` is called a *free variable*. The scoping rules of a language determine how values are assigned to free variables. Free variables are not formal arguments and are not local variables (assigned inside the function body).  
+Lexical scoping in R menas that *the values of free variables are seached for in the environment in which the function was defined*.  
+What is an environment?  
+- A collection of (symbols, value) pairs, i.e. `x` is a symbol and `3.14` might be its value.  
+- Every environment has a parent environment; it is possible for an environment to have multiple "children".
+- The only environment without a parent is the empty evironment  
+- A function + an environment (i.e., a function associated to an environment) = a *closure* or *function closure*  
+
+Searching for the value of a free variable:  
+- if the value of a symbol is not found in the environment in which a function was defined, then the search is continued in the *parent environment*  
+- the search continues down the sequence of parent environments until we hit the *top-level environment*; this usually is the global environment (workspace) or the namespace of a package.  
+- after the top-level environment, the search continues down the search list until we hit the *empty environment*. If a value for a given symbol cannot be found once the empty environmemnt is arrieved at, then an error is thrown.  
+
+Why does all this matter?  
+- Typically, a function is defined in the global environment, so that the values of free variables are just found in the user's workspace  
+- This behavior is logical for most people and is usually the "right thing" to do  
+- However, in R you can have functions defined *inside other functions* (e.g., a function can return a function as the return value, therfore, the returned function is defined by the other function). (languages like C don't let you do this)  
+- Now things get interesting --- in this case the environment in which a function is defined is the body of another function!  
+
+Consequences of lexical scoping:  
+- In R, all objects must be stored in memory  
+- All functions must carry a pointer to their respective defining environments, which could be anywhere  
+- In S-PLUS, free variables are always looked up in the global workspace, so enverything can be stored on the disk becuase the "defining environment" of all functions is the same.
+
+## Coding standards
+- write the code using text editor and save it as a text file. Idea is that it can be read by anyone, any software.  
+- Indent your code. Different blocks of code should be spaced over to the right.  
+- Limit the width of the code (80 columns?).  
+- Suggested: Indents of 4 spaces at minimum; 8 spaces ideal  
+- Limit the length of individual functions (also means having less tasks per function)
+
+##Dates and Times in R
+R has a special way to represent dates and times  
+- Dates are represented by the `Date` class  
+- Times are represented by the `POSIXct`or the `POSIXlt` class  
+- Dates are stored internally as the number of days since 1970-01-01  
+- Times are stored internally as teh number of seconds since 1970-01-01  
+
+Times:  
+- POXIXct is just a very large integer under the hood; it use a useful class when you want to store times in something like a dataframe    
+- POIXlt is a list undernead and it stores a bunch of other useful information, like the day of the week, day of the year, month, day of the month  
+
+There are a number of generic functions that work on dates and times  
+- weekdays: give the day of the week  
+- months: give the month name  
+- quarters: give tquarter number ("Q1", "Q2", "Q3", or "Q4")
+
+
+
+## Loop functions
+Loops are useful to doo a lot with a short code. Some functions which implement looping to make life easier:  
+- `lapply`: Loop over a list an evaluate a fucntion on each element. It always retunrs a list, regardless of the class of the input.  
+- `sapply`: Sam as `lapply` but try to simplify the result. If the result is a list where every elements is length 1, then a vector is returnd. If the result is a list where every element is a vector of the same length (>1), a matrix is returned. IF it can't ficutre things out, a list is returned.  
+- `apply`: apply a function over the margins of an array. Used to evaluate a function (often an anonymous one) over the margins of an array. Its is most often used to apply a function to the rows or the columns of a matrix. It can be used with general arrays, e.g., taking the average of an array of matrices. IT is not really faster than writing a loop, but it works in one line.  
+- `tapply`: Apply a function over subsets of a vector. To apply a function over a segment of a vector.   
+- `mapply`: Multivariate  version of `lapply'. It applies a function in parallel over a set of arguments (e.g., multiple lists).  The number of arguments that the function takes has to be at least as many as the as the number of lists that you are going to pass to mapply.  
+- An auxiliariy function `split` also useful, particularly in conjunction with `lapply`. It takes a vector or other objects and splits it into groups determined by a factor or a list of factors.  
+
+All these fucntions make heavy use of *anonymous* functions (i.e., functions that don't have names). 
+
+
+## Debuging tools
+Useful for figuring out what is wrong after realizing that there is a problem.  
+
+Indications that something's not right:  
+- Message: A generic notification/diagnostic message produced by the *message* function; execution of the function continues (it also can be nothing). Message is produced after the function is executed.  
+- Warning: An indication that something is wrong (or that something unexpected happened) but not necessarily fatal; execution of the function continues; generated by the *warning* function. By default, the warnings appears once the function is already executed.  
+- Error: An indication that a fatal problem has occurred; excution stops; produced by the stop function.  
+- Condition: A generic concept for indicating that something unexpected can occur; programmers can create their own conditions  
+
+How do you know that something is wrong with your function? (some useful questions, especially to figure out whether there is actually an error or there is an user's mistake)  
+- What was your input? How did you call the function?  
+- What were you expecting? Output, messages, other results?  
+- What did you get?  
+- How does what you get differ from what you were expecting?  
+- Where your expectations correct in the first place?  
+- Can you reproduce the problem (exactly)?  
+
+### Debugging tools
+The primary tools for debugging functions in R are:  
+- traceback: prints out the *function call stack* after an error occurs; does nothing if there's no error. Especially usefule when the functions call other functions, so as to know in which of all the function that are called is the error.  
+- debug: flags a function for "debug" mode which allows you to step through execution of a function one line at a time. Probably the most useful function. It flags that function for debug mode. Then, anytime you execute that function, even if another function calls it, it will suspend execution of the function at the first line, in what is called *the browser*. And then, you can step through the function line by line.  
+- browser: suspends the execution of a function whenever it is called (in the middle of a code, for example) and puts the function in debug mode. Then, you can go line by line from there.  
+- trace: allows you to insert debugging code into a function at specific places. This, without editing the function itself (especially useful for debugging someone else's code)  
+- recover: allows you to modify the error behavior so that you can browse the function call stack  
+
+These are interactive tools specifically designed to allow you to pick through a function. There's also the more blunt technique of inserting print/cat statements in the function.
+
+
+
+## The `str` function
+- A diagnostic function and an alternative to `summary`  
+- It is especially well suited to compactly display the (abbreviated) contents of (possibly nested) lists.  
+- Roughly one line per basic object  
+
+
+## Simulation
+Functions for probability distributions in R:  
+- `rnorm`: Generate random Normal variates with a given mean and starndard deviation (generates a variable with normal distribution)  
+- `dnorm`: evaluate the Normal probability density (with a given mean/SD) at a point (or vector of points)  
+- `pnorm`: evaluate the cumulative distribution function for a Normal distribution  
+- `rpois`: generate random Poisson varates with a given rate  
+
+Probability distribution functions usually have four functions associated with them. The functions are prefixed with a:  
+- `d` for density (evaluates the density of the probability distribution for a given mean and sd)  
+- `r` for random number generation  
+- `p` for cumulative distribution (evaluates the cumulative distribution)  
+- `q` for quantile function  
+
+If Ω is the cumulative distribution fucntion of a Standard Normal distribution, then `pnorm(q) = Ω(q)` and `qnorm(p)=Ω^-1(p)`  (qnorm is the inverse of pnorm).  
+
+Setting the random number seed with `set.seed` ensures reproducibility (always do this when conduncting a simulation!). The numbers are never really random, they are pseudorandom (the appear to be random, although they can be reproduced). The seed can be any integer.  
+
+
+## Generating Random Numbers from a Linear Model
+Suppose we want to simulate from the following linear model  
+`y=ß0+ß1x+€` 
+WWhere €~N(0,2^2) (mean=0, sd=2). Assume x~(0,1^2) (mean=0, sd=1), ß0=0.5 and ß1=2
+
+set.seed(20)  
+x <- rnorm(100)
+e <- rnorm(100, 0, 2)
+y <- 0.5 + 2 * x + e
+plot(x,y)  
+
+...
+
+## Random sampling
+The `sample` function draws randomly from a specificed set of (scalar) objects allowing you to sample from arbitrary distributions.
+
+
+## R Profiler
+Useful for long programs or doing really bid data analyses, where you are running R codes that take a long time and you don't want to wait. It helps figuring out exactly why it is taking so much time and to suggest strategies for fixing the problem.  
+
+Why is my code so slow?  
+- Profiling is a systemic way to examine how much time is spend in differnt parts of a program  
+- Useful when trying to optimize your code  
+- Often code runs fine once, but what if you have to put it in a loop for 1,000 iterations? Is it still fast enough?  
+- Profiling is better than guessing  
+
+On Optimizing your Code:  
+- Getting biggest impact on speeding up code dependes on knowing where the code spends most of its time  
+- This cannot be done without performance analysis or profiling  
+- First, design the code, so that it is understandable, and then optimize it. "Premature optimization is the root of all evil", you may end up having the problems of optimization without even getting a chance to get things working.  
+- Once decided to optimize, act like a scientist: meassure (collect data), don't guess. The way to collect data is by profiling.  
+
+Using `system.time()`:  
+- Takes an arbitrary R expression as input (can be wrapped in curly braces) and returns the amount of time taken to evaluate the expression.  
+- Computes the time (in seconds) needed to execute an expression. If there is an error, gives time until the error occurredd.  
+- Returns an object of class `proc_time`.  
+- Two notions of time: **User time:** time charged to the CPU(s) for this expression (the time that the computer experiences). **Elapsed time:** "wall clock" time (the time that you experience). Which one matters depends on what you care about.  
+        - Usually, the user time and elapsed time are relatively close, for straight computing tasks.  
+        - Elapsed time may be *greater than* user time if the CPU spends a lot of time waiting around (e.g., when there are things external to the computing going on the background).  
+        - Elapsed time may be *smaller than* the user time if your machin has multiple cores/processors (and is capable of using them). Examples of libraries using multiple cores:   
+        - Multi-threaded BLAS libraries (vecLib/Accelerate, ATLAS, ACML MKL)  
+        - Parallel processing via the **parallel** package  
+
+- `system.time()`allows testing certain functions or code blocks to see if they are taking excessive amounts of time  
+- It assumes you already know the problem is and can call `system.time()`on it  
+- What if you don't know where to start?: `Rprof()`  
+
+The `Rprof()` function starts the profiler in R. R must be compiled with profiler support (but this is usually the case).  
+- The `summaryRprof()` funcion summarizes the output from `Rprof()` (otherwise it is not readable).  
+- DO NOT use `system.time()` and `Rprof()`together.  
+
+- `Rprof()`keeps track of the function call stack at regularly sampled intervals and tabulates ho much time is spend in each function.  
+- Default sampling interval is 0.02 seconds.  
+- NOTE: if your code rusn ery quickly, the profiler is not useful, but then you probably don't need it in that case.
+
+- The `summaryRprof() function tabulates the R profiler output and caluclates how much time is spend in which function.  
+- There are two methods for normalizing the data  
+        - "by.total" divides the time spend in each function by the total run time. Gives you how time that functions spends considering in the calculation that function and all the functions that first one calls.  
+        - "by.self" does the same but first substracts out time spent in functions above the call stack. It is more itneresting because it tells how much time is being spent in a given function, but after substracting out all of the time spent in lower level functions that it calls. Gives more accurate picture of which functions are truly taking up teh most amount of time and which functions we might want to target for optimization later on.  
+        
+
 
 
 
