@@ -266,6 +266,7 @@ system.time({
 
 
 ## R Profiler Raw Output
-
+lm(x ~ y)
+sample.interval=10000
 
 
