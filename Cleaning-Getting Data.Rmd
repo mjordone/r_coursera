@@ -1,0 +1,331 @@
+---
+title: "Cleaning-Getting Data"
+author: "MartinCorp"
+date: "10/14/2020"
+output: html_document
+---
+
+## Raw and processed data
+Data are values of qualitative or quantitative variables, belonging to a set of items. "Set of itmes" can be the population or the set of objects you are interested in. "Variables" are the things you are measuring (qualitative or quantitatively).  
+
+**Raw Data:**  
+- The original source of the data  
+- Often hard to use for data analyses  
+- Data analysis *includes* processing (or cleaning)  
+- Raw data may only need to be processed once.  
+
+**Processed data:**  
+- Data that is ready for analysis  
+- Processing can include merging, subsetting, transforming, etc.   
+- There may be standards for processing  
+- All steps should be recorded  
+
+
+## Components of tidy data
+Four things you should have:  
+1. The raw data  
+2. A tidy data set  
+3. A code book describing each variable and its values in the tidy data set (the meta data set)  
+4. A explicit and exact receipe you used to go from 1 to 2 and 3 (here, r scripts)  
+
+**The raw data:** Data is raw if you:  
+1. Ran no software on the data  
+2. Did not maipulate any of the numbers in the data  
+3. Did not remove any data from the data set  
+4. Did not summarize the data in any way  
+
+**The tidy data:**  
+1. Each variable you measure should be in one column  
+2. Each different observation of that variable should be in a different row  
+3. There should be one table for each "kind" of varaible (e.g., if you collected data from twitter and facebook, you should have tables for each of those)  
+4. If you have multiple tables (and you want to merge them), they should include a column in the table that allows them to be linked  
+
+Other important tips:  
+- Include a row at the top of each file with variable names  
+- Make variable names human readabe  
+- In general data should be saved in one file per table  
+
+**The code book:**  
+1. Information about varaibles (inclding units! e.g., millions, thousands, cms, etc.) in the data set not contained in the tidy data  
+2. Information about the summary choices you made  
+3. Information about the experimental study design you used  
+
+Some other important tips:  
+- A common format for this document is a Word/tex file  
+- There should be a section called "Study design" that has a thorough description of how you collected the data  
+- There must be a section called "Code book" that describes each variable and its units  
+
+**The instruction list:**  
+- Ideally a computer script  
+- The input for the script is the raw data  
+- The output is the processed, tidy data  
+- There are no parameters to the script  
+
+In some cases it will not be possible to script every step. In that case you should provide detailed, step by step instructions.  
+
+## Getting Data by Dowloading files
+`download.file`:  
+- Donwlads a file form the internet  
+- Even if you could do this by hand, helps with reproducibility  
+- Important parameters are *url* (use the exact path to the database, not only to the page where it can be downloaded), *destfile* (destination file, where the data is going to go), *method*  
+- Useful for downlading tab-delimited, csv, and other files  
+
+Some notes about download.file():  
+- If the url strats with *http* you can use download.file()  
+- If the url starts with *https* on Mac you may need to set method="curl"  
+- If the file is big, this might take a while  
+- Be sure to record when you downloaded.
+
+## Reading local flat files
+...
+
+## Reading XML
+- Extensible Markup Language  
+- Frequently used to store structured data  
+- Particularly widely used in internet applications   
+- Extracting XML is the basis for most web scraping  
+- Components:  
+        - Markup - labels that give the text structure  
+        - Content - the actual text of the document  
+
+### Tags, elements and attributes
+- Tags correspond to general labels  
+        - Start tags `<section>`  
+        - End tags `</section>`  
+        - Empty tags `<line-break />`  
+- Elements are specific examples of tags  
+        - `<Greeting> Hello, world! </Greeting>`  
+- Attributes are components of the label  
+        - `<img src="jeff.jpg" alt="instructor" />`  
+        - `<step number="3"> Connect A to B. </step>`
+        
+###Accessing components through XPath Language (see http://www.stat.berkeley.edu/~statcur/Workshop2/Presentations/XML.pdf)
+- `/node` Top level node  
+- `//node` Node at any level  
+- `node[@attr-name]` Node with an attribute name  
+- `node[@attr-name='bob']` Node with attribute name attr-name='bob'
+
+
+## Reading JSON
+- Javascript Object Notation  
+- Lightweight data storage  
+- Common format for data form application programming interfaces (APIs)  
+- Similar structure to XML but different syntax/format  
+- Data stored as  
+        - Numbers (double)  
+        - Strings (double quoted)  
+        - Boolean (true or false)  
+        - Array (ordered, comma separated enclosed in square brackets)  
+        - Object (unordered, comma separated collection of key:value pairs in curkey brackets)  
+        
+The presence of curly brackets (starting with one and having an additional one for every component) helps identifying JSON
+
+
+## The data.table Package
+Often faster and more memory efficient version of data.frame. It inherets from data.frame, so all functions that accept data.frame work on data.table. It is written in C so it is much faster. Much, much faster at subsetting, group and updating. Requires learning a bit of a new syntax, so there is a learning curve.
+
+## Reading mySQL
+- Free and widely used open source database software  
+- Widely used in internet baed applications  
+- Data are structured in  
+        - Databases (series of tables linked together. The tables have a variable that link them) 
+        - Tables withing databses  
+        - Fields within tables  
+- Each row is called a record  
+
+- **Do not, do not, delet, add or join things from ensembl. Only select.** (only use the select command)  
+- In general, be careful with mysql commands  
+
+(https://genome.ucsc.edu/goldenPath/help/mysql.html)
+
+
+## Reading HDF5
+Used for storing large datasets. Supports storing a range of data types using Hierarchical Data Format. Data is stored in *groups* cointaining zero or more data sets and meatadata:  
+- Have a *group header* with group name and list of attributes  
+- Have a *group symbol table* with a list of objects in group  
+*datasets* are multidimensional array of data elements with metadata:  
+- Have a *header* with name, datatype, dataspace, and storage layout  
+- Have a *data array* with the data (like a dataframe)
+
+## Reading from the web
+**Webscraping:** programatically extracting data from the HTML code of websites. It can be a great way to get data. Many websites have information you may wnat to programatically read. In some cases this is against the terms of services for the website. Attempting to read too many pages too quickly can get your IP address blocked.  
+- R Bloggers has a number of examples of web scraping http://www.rbloggers.com/?s=Web+Scraping
+
+## Reading data from APIs
+Application Programming Iterface. Most internet companies (e.g., Twitter, Facebook, etc) have an API where you can download data (e.g., which users are twitting, or what are they tweeting about). You can usually get these with GET requests with specific URLs as the arguments. We can use the HTTR package to be able to get data from these websites.  
+
+First, we need to create an account with the API with the development team out of each particular organization (e.g., dev.twitter.com/apps) and create an application. To know what url to use, you go into the documentation for the Twitter API, and there there is a resource URL telling which URL should be passed to the GET command, and several parameters that can go aloing with it. You can also go to the main Twitter documentation (REST API v1.1 Resources), where you can find information about different kinds of information.
+
+## Reading from other sources
+In general, the best way to find out if the R package exist is to Google "data storage mechanism R package" (eg. MySQL R package).  
+
+**Interactind more directly with files:**  
+- file - open a connection to a text file  
+- url - open a connection to a url  
+- gzfile - open a conection to a .gz file  
+- bzfile - open a connection to a .bzw file  
+- *?connections* for mor connections  
+- **Remember to close connections**  
+
+**Foreign package:** Loads data from Minitab, S, SAS, SPSS, Stata, Systat. Basic function is `read.foo`:  
+- read.arff (Weka)  
+- read.dta (Stata)  
+- read.mtp (Minitab)  
+- read.octave (Octave)  
+- read.spss (SPSS)  
+- read.xport (SAS)  
+
+**Reading images:**  jpeg, readbitmap, png, EBImage (Bioconductor). Look for packages for all of these.  
+
+**Reading GIS data:** rdgal, rgeos, raster...  
+
+**Reading music data (mp3):** tuneR, seewave
+
+##Subsetting and sorting
+Once the data is loaded into R, then we want to manipulate it, so as to make a tidy set.
+
+## Summarizing data
+...
+
+## Creating new variables 
+Often the raw data won't have a value your are looking for. You will need to transform the data to get the values you would like. Usually you will add those values to the data frames you are working with. Common variables to create:  
+- Missingness indicators  
+- "Cutting up" quantitative variables (factors of numeric variables)  
+- Applying transforms  
+
+Common transforms:  
+- `abs(x)` absolute value  
+- `sqrt(x)` square root  
+- `ceiling(x)` ceiling(3.475) is 4  
+- `floor(x)` floor(3.475) is 3  
+- `round(x, digits=n)` rounds to the specified number of digits  
+- `signif(x, digits=n)`signif(3.475, ditigs=2) is 3.5  
+- cos(x), sin(x), log(x), log2(x), log10(x), exp(x)
+
+## Reshaping data
+The goal is tidy data, which means that each variable forms a column, each observation forms a row, each table/file sotres data about one kind of observation.
+
+
+## MAnaging Data Frames with dplyr
+A packages designed to help working with data frames. Important dplyr verbs:  
+- `select`: returns a subset of the column of a data frame  
+- `filter`: extract a subset of a row from a dta frame based on logical conditions  
+- `arrange`: reorder rows of a data frame  
+- `rename`: rename variables in a data frame  
+- `mutate`: add new variables/columns or transform exisiting variables  
+- `summarise` / `summarize`: generate summary statistics of different variables in the data frame, possibly within strata.  
+
+There is also a handy print method that prevents you from printing a lot of data to the console.  
+
+All the dplyr functions have a similar format.  
+- first argument is a data frame  
+- subsequent arguemnts describe what to do with it, and you can refere to columns in the data frame directly without uisng $ operator (just use the names)  
+- the result is a new data frame  
+- data frames must be properly formatted and annotated for this to all be useful  
+
+Additional benefits:  
+- dplyr can work with other data frame "backends"  
+- data.table for large fast tables  
+- SQL interface for relational databases via the DBI package  
+
+## Merging data
+Important parameters to merge: datasets "x" and "y"; "by", "by.x", "by.y" (to tell a mege which of the columns it should berge by. Default, merge all the collumns that have the common name); "all" (for values that are in one dataset and not in the other, a row for that value should be added)
+
+
+## Editing text Variables
+Name of variables should be: all lower case when possible, descriptive, not duplicate, not have underscores or dots or white spaces. Variables with character values should: usually be made into factor variables (depends on the application), be descriptive (use TRUE/FALSE instead of 0/1 and Male/Female versus 0/1 or M/F) 
+
+## Regular Expressions
+Can be thought of as a combination of literals and *metacharacters*. To draw an analogy with natural language, think of literal text forming the words of this language, and the metacharacters defining its grammar. Regular expressions have a rich set of metacharacters.  
+- Literals are words that match exactly with the words that appear in the text. The simplest pattern consist only of literals; a match occurs if the sequence of literals occurs anywhere in the text being tested.  
+- But we need a way to express whitespace words boundaries, sets of literals, the beginning and end of a line, alternatives ("war" or "peace"). Here is where metacharacters can be useful.  
+        *`^i think` will match the start of a line followed by "i think" (^ indicates start of line)  
+        *`morning$` will match lines ending with "morning" ($ indicates end of line)  
+        *`[Bb][Uu][Ss][Hh]` will match the word "bush" no matter if any of the letters is capitalized or not (identifies a set of characters that will be accepted at any given point in the match)  
+        *`^[Ii] am` will match the start of a line followed by "i think", regardless of capitalized "i" or not (combination of the others)  
+        *`^[0-9][a-zA-Z]` will match start of line followed by a number and a letter (specifiying range of characters)
+        *`[^?.]$` will match all lines ending in anything other than a period or a question mark (the ^ sign within the square brackes is negation)  
+        *`9.11`will match all instances of "9" and "11" separated by one (any) character (the "." indicates any character)  
+        *`flood|fire` will match all the lines where either "flood" or "fire" appears (the "|" indicates alternatives. We ca have more than two alternatives, adding them with a | separator)  
+        *`^[Gg]ood|[Bb]ad` will match all the lines starting with "good" or having "bad" anywhere in the line, capitalized or not (expressions can be alternatives too, not only literals)  
+        *`^([Gg]ood|[Bb]ad)` will match lines starting with "good" or "bad", capitalized or not (round parenthesis makes the precedent metacharacter valid for all the elements in it)  
+        *`[Gg]eorge( [Ww]\.)? [Bb]ush` will match "george bush" with or without the "w." in between, capitalized or not (the "?" indicates optional--the weird symbols after the [Ww] indicates that the period is not a metacharacter)  
+        * `(.*)` will match lines with any character repeted any number of times (including zero times) within parenthesis (star means repeat any number of times including non of the item. the "." means any character)  
+        * `[0-9]+ (.*)[0-9]+` will match lines with at least one number fllowed by any number of characters followed by at least one number again (i.e. numbers separated by something other than numbers) (plus means at least one of the item)  
+        *`[Bb]us( +[^ ]+ +){1,5} debate` will match lines where we have "bush" and "debate" with, in between, at least one space, followed by something that is not a spaced, followed by at least one space , and we want to see that between 1 and 5 times (i.e. bush and debate with 1 to 5 words in between) (curly brackets indicate interval qualifiers specifying minimum and maximum number times to match an expression)  
+        *`m,n` means at least m but not more than n matches  
+        *`m` means exactly m matches  
+        *`m,` means atl least m matches  
+        
+- In most implementations of regular expressions, the parenthesis not only limit hte scope of alternatives divided by a "|", but also can be used to "remember" text matched by the subexpression enclosed. We refer to the matched text with \1, \2, etc. E.g. ` +([a-zA-Z]+) +\1+`: here the \2 would repet exactly what is written in the parenthesis (this specific command would look for repeated phrases)  
+- The star is greedy so it always matches the *longest* possible stirng that satisfies the regular expression. E.g. `^s(.*)s` will match all the lines starting with an "s" to the last "s" of the line. To make it less greedy: `^s(.*?)s$`. The question mark indicates that it don't has to find the maximum through the string, followed by something with an S at the end of the string.  
+Used with the functions grep, grepl, sub, gsub and other sthat involve searching for text strings.
+
+## Working with dates
+**Formating Dates:** %d = day as number (0-31); %a = abbreviated weekday;  %A = unabbreviated weekday; %m = month(00-12); %b = abbreviated month; %B = unabbreviated month; %y = 2 digit year; %Y = four digit year
+        
+## Data resources    
+- data.un.org
+- www.data.gov
+- data.gov.uk
+- www.data.gouv.fr
+- data.gov.gh
+- data.gov.au
+- www.govdata.de
+- www.gov.hk/en/theme/psi/datasets
+- www.data.go.jp
+- www.data.gov/opendatasites
+
+- www.gapminder.org
+- www.asdfree.com
+- www.infochimps.com/marketplace
+- www.kaggle.com
+
+- API's with R interfaces:  
+        * twitter and twitteR package  
+        * fighsare and rfighsare  
+        * PLoS and rplos  
+        * rOpenSci 
+        * Facebook and RFacebook 
+        * Google maps and RGoogleMaps
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
